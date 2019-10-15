@@ -1,5 +1,6 @@
 package li.yuhang.fogofworld.server.model;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Getter
-@Setter
+@Setter()
 @NoArgsConstructor
 @Entity
 @Accessors(chain = true)
@@ -23,6 +24,7 @@ import javax.persistence.Table;
 public class User {
 
     @Id
+    @Setter(AccessLevel.NONE)
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
