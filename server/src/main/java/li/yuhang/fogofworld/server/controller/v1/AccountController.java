@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -19,7 +20,7 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @RequestMapping("/signUp")
+    @RequestMapping(value = "/signUp", method = RequestMethod.POST)
     public Response signUp(@RequestBody @Valid SignUpRequest request) {
         AccountDto accountDto = accountService.signUp(new AccountDto()
                                                       .setUsername(request.getUsername())
