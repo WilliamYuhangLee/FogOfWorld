@@ -7,22 +7,22 @@ import org.springframework.stereotype.Component;
 import java.text.MessageFormat;
 
 @Component
-public class APIExceptionFactory {
+public class ApiExceptionFactory {
 
     private static ExceptionPropertiesConfiguration exceptionPropertiesConfiguration;
 
     @Autowired
-    public APIExceptionFactory(ExceptionPropertiesConfiguration exceptionPropertiesConfiguration) {
-        APIExceptionFactory.exceptionPropertiesConfiguration = exceptionPropertiesConfiguration;
+    public ApiExceptionFactory(ExceptionPropertiesConfiguration exceptionPropertiesConfiguration) {
+        ApiExceptionFactory.exceptionPropertiesConfiguration = exceptionPropertiesConfiguration;
     }
 
-    static abstract class APIException extends RuntimeException {
-        APIException(String message) {
+    static abstract class ApiException extends RuntimeException {
+        ApiException(String message) {
             super(message);
         }
     }
 
-    public static <E extends APIException> APIException exception(Class entityClass, Class<E> exceptionClass, String... args) {
+    public static <E extends ApiException> ApiException exception(Class entityClass, Class<E> exceptionClass, String... args) {
         String configKey = formatConfigKey(entityClass, exceptionClass);
         String messageTemplate = exceptionPropertiesConfiguration.getConfigValue(configKey);
         String message = messageTemplate == null ? "An error has occurred." : MessageFormat.format(messageTemplate, args);

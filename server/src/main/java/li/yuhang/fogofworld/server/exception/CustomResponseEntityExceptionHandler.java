@@ -16,18 +16,13 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity<>(Response.withStatus(status).addException(e), status);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Response> handleException(Exception e) {
-        return responseEntity(e, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<Response> handleException(RuntimeException e) {
-        return responseEntity(e, HttpStatus.BAD_REQUEST);
+        return responseEntity(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @ExceptionHandler(APIExceptionFactory.APIException.class)
-    public ResponseEntity<Response> handleException(APIExceptionFactory.APIException e) {
+    @ExceptionHandler(ApiExceptionFactory.ApiException.class)
+    public ResponseEntity<Response> handleException(ApiExceptionFactory.ApiException e) {
         return responseEntity(e, HttpStatus.BAD_REQUEST);
     }
 

@@ -1,7 +1,7 @@
 package li.yuhang.fogofworld.server.service;
 
 import li.yuhang.fogofworld.server.dto.AccountDto;
-import li.yuhang.fogofworld.server.exception.APIExceptionFactory;
+import li.yuhang.fogofworld.server.exception.ApiExceptionFactory;
 import li.yuhang.fogofworld.server.exception.DuplicateEntityException;
 import li.yuhang.fogofworld.server.model.Account;
 import li.yuhang.fogofworld.server.dto.AccountMapper;
@@ -24,7 +24,7 @@ public class AccountServiceImpl implements AccountService {
     public AccountDto signUp(AccountDto accountDto) {
 
         if (accountRepository.existsById(accountDto.getUsername())) {
-            throw APIExceptionFactory.exception(Account.class, DuplicateEntityException.class, accountDto.getUsername());
+            throw ApiExceptionFactory.exception(Account.class, DuplicateEntityException.class, accountDto.getUsername());
         }
 
         Account account = new Account()
