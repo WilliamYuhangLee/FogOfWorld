@@ -22,12 +22,9 @@ public class ApiExceptionFactory {
         }
     }
 
-    public static <E extends ApiException> ApiException exception(Class entityClass, Class<E> exceptionClass, String... args) {
-        String configKey = formatConfigKey(entityClass, exceptionClass);
-        String messageTemplate = exceptionPropertiesConfiguration.getConfigValue(configKey);
-        String message = messageTemplate == null ? "An error has occurred." : MessageFormat.format(messageTemplate, args);
+    public static <E extends ApiException> E exception(Class entityClass, Class<E> exceptionClass, String... args) {
         try {
-            return exceptionClass.getConstructor(String.class).newInstance(message);
+            return exceptionClass.getConstructor(String.class).newInstance(formatMessage(entityClass, exceptionClass, args));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -37,4 +34,9 @@ public class ApiExceptionFactory {
         return (entityClass.getSimpleName() + "." + exceptionClass.getSimpleName().replace("Exception", "")).toLowerCase();
     }
 
+    public static String formatMessage(Class entityClass, Class exceptionClass, String... args) {
+        String configKey = formatConfigKey(entityClass, exceptionClass);
+        String messageTemplate = exceptionPropertiesConfiguration.getConfigValue(configKey);
+        return messageTemplate == null ? "An error has occurred." : MessageFormat.format(messageTemplate, args);
+    }
 }
