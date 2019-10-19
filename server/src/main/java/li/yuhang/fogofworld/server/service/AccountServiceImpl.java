@@ -5,6 +5,7 @@ import li.yuhang.fogofworld.server.exception.ApiExceptionFactory;
 import li.yuhang.fogofworld.server.exception.DuplicateEntityException;
 import li.yuhang.fogofworld.server.model.Account;
 import li.yuhang.fogofworld.server.dto.AccountMapper;
+import li.yuhang.fogofworld.server.model.Role;
 import li.yuhang.fogofworld.server.model.User;
 import li.yuhang.fogofworld.server.repository.AccountRepository;
 import li.yuhang.fogofworld.server.repository.UserRepository;
@@ -29,7 +30,8 @@ public class AccountServiceImpl implements AccountService {
 
         Account account = new Account()
         .setUsername(accountDto.getUsername())
-        .setPassword(accountDto.getPassword());
+        .setPassword(accountDto.getPassword())
+        .setRole(Role.USER);
 
         User user = new User().setAccount(account);
 

@@ -15,4 +15,5 @@ public class AccountDto {
     private String username;
     private Long user_id;
     private String password;
+    private String role;
 }

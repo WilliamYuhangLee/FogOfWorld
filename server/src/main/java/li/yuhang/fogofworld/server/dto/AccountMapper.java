@@ -10,6 +10,7 @@ public class AccountMapper {
         return new AccountDto()
         .setUsername(account.getUsername())
         .setPassword(account.getPassword())
-        .setUser_id(account.getUser().getId());
+        .setUser_id(account.getUser().getId())
+        .setRole(account.getRole().name());
     }
 }
