@@ -1,7 +1,7 @@
 package li.yuhang.fogofworld.server.controller.v1;
 
 import li.yuhang.fogofworld.server.dto.AccountDto;
-import li.yuhang.fogofworld.server.request.SignUpRequest;
+import li.yuhang.fogofworld.server.request.AccountRequest;
 import li.yuhang.fogofworld.server.util.Response;
 import li.yuhang.fogofworld.server.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +17,14 @@ import javax.validation.Valid;
 @RequestMapping("/api/v1/account")
 public class AccountController {
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @RequestMapping(value = "/signUp", method = RequestMethod.POST)
-    public Response signUp(@RequestBody @Valid SignUpRequest request) {
+    public Response signUp(@RequestBody @Valid AccountRequest request) {
         AccountDto accountDto = accountService.signUp(new AccountDto()
                                                       .setUsername(request.getUsername())
                                                       .setPassword(request.getPassword()));

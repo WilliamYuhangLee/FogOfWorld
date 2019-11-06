@@ -13,7 +13,7 @@ import javax.validation.constraints.NotEmpty;
 @Accessors(chain = true)
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class SignUpRequest {
+public class AccountRequest {
 
     @NotEmpty(message = "{constraints.NotEmpty.message}")
     private String username;

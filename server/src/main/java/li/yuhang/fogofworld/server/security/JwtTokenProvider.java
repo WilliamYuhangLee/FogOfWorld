@@ -5,7 +5,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import li.yuhang.fogofworld.server.exception.InvalidJwtTokenException;
 import li.yuhang.fogofworld.server.service.AccountService;
 import org.postgresql.util.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +21,17 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Autowired
-    private SecuritySettings securitySettings;
+    private final SecuritySettings securitySettings;
 
-    @Autowired
-    private AccountService accountService;
+    private final AccountService accountService;
 
     private Key secretKey;
     private long expireLength; // in milliseconds
+
+    public JwtTokenProvider(SecuritySettings securitySettings, AccountService accountService) {
+        this.securitySettings = securitySettings;
+        this.accountService = accountService;
+    }
 
     @PostConstruct
     protected void init() {
@@ -37,7 +39,7 @@ public class JwtTokenProvider {
         expireLength = securitySettings.getExpireLength();
     }
 
-    public String createToken(String username) {
+    String createToken(String username) {
         Date now = new Date();
         Date expire = new Date(now.getTime() + expireLength);
         Claims claims = Jwts.claims()
@@ -47,7 +49,7 @@ public class JwtTokenProvider {
         return Jwts.builder().setClaims(claims).signWith(secretKey, SignatureAlgorithm.HS256).compact();
     }
 
-    public boolean validateToken(String token) {
+    boolean validateToken(String token) {
         try {
             // OK, we can trust this JWT
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
@@ -58,20 +60,20 @@ public class JwtTokenProvider {
         }
     }
 
-    public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+    String resolveToken(HttpServletRequest req) {
+        String bearerToken = req.getHeader(securitySettings.AUTH_HEADER_STRING);
+        if (bearerToken != null && bearerToken.startsWith(securitySettings.TOKEN_PREFIX)) {
+            return bearerToken.replace(securitySettings.TOKEN_PREFIX, "");
         }
         return null;
     }
 
-    public Authentication getAuthentication(String token) {
+    Authentication getAuthentication(String token) {
         UserDetails userDetails = accountService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUsername(String token) {
+    private String getUsername(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 }
