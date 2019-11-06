@@ -1,13 +1,13 @@
-package li.yuhang.fogofworld.server.config;
+package li.yuhang.fogofworld.server.exception;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
-@Component
+@Configuration
 @PropertySource(value = "classpath:exception.properties")
-public class ExceptionPropertiesConfiguration {
+public class ExceptionMessages {
 
     @Autowired
     private Environment env;

@@ -1,6 +1,6 @@
 package li.yuhang.fogofworld.server.security;
 
-import li.yuhang.fogofworld.server.exception.ApiExceptionFactory;
+import li.yuhang.fogofworld.server.exception.CustomExceptions;
 import li.yuhang.fogofworld.server.exception.EntityNotFoundException;
 import li.yuhang.fogofworld.server.model.Account;
 import li.yuhang.fogofworld.server.repository.AccountRepository;
@@ -23,11 +23,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Account account = accountRepository.findAccountByUsername(username);
-        if (account == null) {
-            throw new UsernameNotFoundException(
-            ApiExceptionFactory.formatMessage(Account.class, EntityNotFoundException.class, username));
-        }
+        Account account = accountRepository.findAccountByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        CustomExceptions.formatMessage(Account.class, EntityNotFoundException.class, username)));
         GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(account.getRole().name());
         return new User(username, account.getPassword(), Collections.singleton(grantedAuthority));
     }
