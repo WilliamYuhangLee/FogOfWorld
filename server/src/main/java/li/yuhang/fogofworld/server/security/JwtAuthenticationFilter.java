@@ -12,7 +12,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,15 +20,14 @@ import java.util.ArrayList;
 @Component
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
-    private AuthenticationManager authenticationManager;
-    private JwtTokenProvider jwtTokenProvider;
-    private SecuritySettings securitySettings;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final SecuritySettings securitySettings;
 
     @Autowired
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
                                    JwtTokenProvider jwtTokenProvider,
                                    SecuritySettings securitySettings) {
-        this.authenticationManager = authenticationManager;
+        this.setAuthenticationManager(authenticationManager);
         this.jwtTokenProvider = jwtTokenProvider;
         this.securitySettings = securitySettings;
     }
@@ -38,7 +36,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
             AccountRequest requestBody = new ObjectMapper().readValue(request.getInputStream(), AccountRequest.class);
-            return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+            return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(
                     requestBody.getUsername(),
                     requestBody.getPassword(),
                     new ArrayList<>()));

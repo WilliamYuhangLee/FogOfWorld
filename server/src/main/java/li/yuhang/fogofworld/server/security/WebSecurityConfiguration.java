@@ -1,9 +1,9 @@
 package li.yuhang.fogofworld.server.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -15,8 +15,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import javax.servlet.http.HttpServletResponse;
 
 @EnableWebSecurity(debug = true)
@@ -41,23 +39,23 @@ public class WebSecurityConfiguration {
 
         public ApiWebSecurityConfigurerAdapter(@Qualifier(value = "accountServiceImpl") UserDetailsService accountService,
                                                PasswordEncoder passwordEncoder,
-                                               JwtAuthorizationFilter jwtAuthorizationFilter,
-                                               JwtAuthenticationFilter jwtAuthenticationFilter) {
+                                               @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
+                                               @Lazy JwtAuthorizationFilter jwtAuthorizationFilter) {
             this.accountService = accountService;
             this.passwordEncoder = passwordEncoder;
             this.jwtAuthenticationFilter = jwtAuthenticationFilter;
             this.jwtAuthorizationFilter = jwtAuthorizationFilter;
         }
 
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.userDetailsService(accountService).passwordEncoder(passwordEncoder);
+        }
+
         @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
         @Override
         public AuthenticationManager authenticationManagerBean() throws Exception {
             return super.authenticationManagerBean();
-        }
-
-        @Override
-        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService(accountService).passwordEncoder(passwordEncoder);
         }
 
         @Override
