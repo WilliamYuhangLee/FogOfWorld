@@ -19,6 +19,9 @@ public class SecuritySettings {
 
     private String secretKey;
     private long expireLength;
+    private String signUpPath;
+    private String loginPath;
+
     public final String TOKEN_PREFIX = "Bearer ";
     public final String AUTH_HEADER_STRING = "Authorization";
 

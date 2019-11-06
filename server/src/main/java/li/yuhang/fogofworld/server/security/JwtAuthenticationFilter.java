@@ -4,11 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import li.yuhang.fogofworld.server.request.AccountRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.FilterChain;
@@ -28,6 +30,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                    JwtTokenProvider jwtTokenProvider,
                                    SecuritySettings securitySettings) {
         this.setAuthenticationManager(authenticationManager);
+        this.setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher(securitySettings.getLoginPath(), "POST"));
         this.jwtTokenProvider = jwtTokenProvider;
         this.securitySettings = securitySettings;
     }
@@ -41,7 +44,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     requestBody.getPassword(),
                     new ArrayList<>()));
         } catch (IOException e) {
-            throw new RuntimeException("Failed to deserialize request body while performing JWT authentication.");
+            throw new BadCredentialsException("Failed to deserialize request body while performing JWT authentication.");
         }
     }
 

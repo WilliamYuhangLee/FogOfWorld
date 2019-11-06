@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -31,6 +32,8 @@ public class WebSecurityConfiguration {
 
         private final UserDetailsService accountService;
 
+        private final SecuritySettings securitySettings;
+
         private final PasswordEncoder passwordEncoder;
 
         private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -38,10 +41,12 @@ public class WebSecurityConfiguration {
         private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
         public ApiWebSecurityConfigurerAdapter(@Qualifier(value = "accountServiceImpl") UserDetailsService accountService,
+                                               SecuritySettings securitySettings,
                                                PasswordEncoder passwordEncoder,
                                                @Lazy JwtAuthenticationFilter jwtAuthenticationFilter,
                                                @Lazy JwtAuthorizationFilter jwtAuthorizationFilter) {
             this.accountService = accountService;
+            this.securitySettings = securitySettings;
             this.passwordEncoder = passwordEncoder;
             this.jwtAuthenticationFilter = jwtAuthenticationFilter;
             this.jwtAuthorizationFilter = jwtAuthorizationFilter;
@@ -60,15 +65,16 @@ public class WebSecurityConfiguration {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
+            http.cors();
             http.csrf().disable();
             http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             http.antMatcher("/api/**").authorizeRequests()
-                .antMatchers("/api/v*/account/signUp").permitAll()
+                .antMatchers(HttpMethod.POST, securitySettings.getSignUpPath()).permitAll()
                 .anyRequest().authenticated();
-            http.addFilter(jwtAuthorizationFilter);
             http.addFilter(jwtAuthenticationFilter);
+            http.addFilter(jwtAuthorizationFilter);
             http.exceptionHandling().authenticationEntryPoint((request, response, exception) ->
-                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized"));
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, exception.getMessage()));
         }
     }
 }

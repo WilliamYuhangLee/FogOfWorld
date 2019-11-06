@@ -4,7 +4,6 @@ import li.yuhang.fogofworld.server.dto.AccountDto;
 import li.yuhang.fogofworld.server.request.AccountRequest;
 import li.yuhang.fogofworld.server.util.Response;
 import li.yuhang.fogofworld.server.service.AccountService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +28,10 @@ public class AccountController {
                                                       .setUsername(request.getUsername())
                                                       .setPassword(request.getPassword()));
         return Response.withStatus(HttpStatus.OK).setPayload(accountDto);
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public Response login(@RequestBody @Valid AccountRequest request) {
+        return Response.withStatus(HttpStatus.OK).setPayload("Login Successful. JWT token returned.");
     }
 }
