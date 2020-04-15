@@ -48,6 +48,13 @@ public class Response<T> {
                              .setTimestamp(new Date()));
     }
 
+    public Response<T> addErrorMessage(String message) {
+        return this.setError(new Error()
+                .setDetails(message)
+                .setMessage(message)
+                .setTimestamp(new Date()));
+    }
+
     public Response<T> addException(Exception e) {
         return this.addErrorMessage(e.getMessage(), e);
     }
